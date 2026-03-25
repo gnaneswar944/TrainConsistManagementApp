@@ -3,14 +3,22 @@ import java.util.List;
 public class TrainConsistManagementApp {
  public static void main(String[] args){
      System.out.println("======================================");
-     System.out.println("   ===Track Unique Bogie IDs ===  ");
+     System.out.println("   ===Maintain Ordered Bogie Consist ===  ");
      System.out.println("======================================");
-     Set<String> bogieIDs = new HashSet<>();
-     bogieIDs.add("BG104");
-     bogieIDs.add("BG103");
-     bogieIDs.add("BG102");
-     bogieIDs.add("BG101");
-     System.out.print("Bogie IDs AFter Insertion:\n");
-     System.out.print(bogieIDs);
+     List<String> trainConsist = new LinkedList<>();
+     trainConsist.add("Engine");
+     trainConsist.add("Sleeper");
+     trainConsist.add("AC");
+     trainConsist.add("Cargo");
+     trainConsist.add("Guard");
+     System.out.print("Intial Train Consist\n");
+     System.out.print(trainConsist);
+     trainConsist.set(2, "Pantry Car");
+     System.out.print("\nAfter Inserting 'pantry Car' at position 2\n");
+     System.out.print(trainConsist);
+     trainConsist.remove("Sleeper");
+     trainConsist.remove("Guard");
+     System.out.print("\nAfter removing first and last\n");
+     System.out.print(trainConsist);
 }
 }

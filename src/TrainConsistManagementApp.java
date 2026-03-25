@@ -19,7 +19,7 @@ public class TrainConsistManagementApp {
     }
  public static void main(String[] args){
      System.out.println("======================================");
-     System.out.println("   ===UC 7-Sort Bogies BY Capacity ===  ");
+     System.out.println("   ===UC 8-Sort Bogies BY Capacity ===  ");
      System.out.println("======================================");
      List<Bogie> bogies = new ArrayList<>();
      bogies.add(new Bogie("Sleeper\n",72));

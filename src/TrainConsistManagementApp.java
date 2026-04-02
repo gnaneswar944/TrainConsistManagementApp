@@ -33,13 +33,10 @@ public class TrainConsistManagementApp {
 
             System.out.print(b);
         }
-        Map<String, List<Bogie>> groupedBogies = bogies.stream().collect(Collectors.groupingBy(b->b.name));
-        System.out.println("\nGrouped Bogies: ");
-        for(Map.Entry<String, List<Bogie>> entry : groupedBogies.entrySet()){
-            System.out.print("\nBogie Type: " +entry.getKey());
-            for(Bogie b : entry.getValue()){
-                System.out.println("Capacity -> " + b.capacity);
-            }
+        int totalCapacity = bogies.stream()
+                .map(b -> b.capacity)
+                .reduce(0, Integer::sum);
+
+        System.out.println("\nTotal Capacity: " + totalCapacity);
         }
     }
-}

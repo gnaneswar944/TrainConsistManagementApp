@@ -1,42 +1,26 @@
 import java.util.*;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.regex.Pattern;
 
 public class TrainConsistManagementApp {
-    static class Bogie {
-        String name;
-        int capacity;
+    static final String TRAIN_ID_REGEX = "^TRN-\\d{4}$";
+    static final String CARGO_CODE_REGEX = "^PET-[A-Z]{2}$";
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("============================================================");
+        System.out.println("\n UC11 : Validate Train ID and Cargo CODES(Redgex)\n");
+        System.out.println("============================================================");
+        System.out.print("Enter Train ID (Format : TRN-1234): ");
+        String trainID = scanner.nextLine();
+        System.out.print("Enter Cargo CODE (Format : PET-AB): ");
+        String cargoCode = scanner.nextLine();
+        boolean isTrainValid = Pattern.matches(TRAIN_ID_REGEX, trainID);
+        boolean isCargoValid = Pattern.matches(CARGO_CODE_REGEX, cargoCode);
+        System.out.println("\nValidation Results:");
+        System.out.println("Train ID Valid: " + isTrainValid);
+        System.out.println("Cargo Code Valid: " + isCargoValid);
+        System.out.println("\nUC11 validation completed...");
 
-        Bogie(String name, int capacity) {
-            this.name = name;
-            this.capacity = capacity;
-
-        }
-
-        @Override
-        public String toString() {
-            return name + "(" + capacity + "seats)";
-        }
     }
 
-    public static void main(String[] args) {
-        System.out.println("======================================");
-        System.out.println("   ===UC 9-Group bogies by Type ===  ");
-        System.out.println("======================================");
-        List<Bogie> bogies = new ArrayList<>();
-        bogies.add(new Bogie("Sleeper\n", 72));
-        bogies.add(new Bogie("\nAC Chair\n", 56));
-        bogies.add(new Bogie("\nFirst Class\n", 24));
-        bogies.add(new Bogie("\nGeneral\n", 90));
-        System.out.print("ALL Bogies\n");
-        for (Bogie b : bogies) {
 
-            System.out.print(b);
-        }
-        int totalCapacity = bogies.stream()
-                .map(b -> b.capacity)
-                .reduce(0, Integer::sum);
-
-        System.out.println("\nTotal Capacity: " + totalCapacity);
-        }
     }

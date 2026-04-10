@@ -1,62 +1,72 @@
 import org.junit.jupiter.api.Test;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TrainConsistManagementAppTest extends TrainConsistManagementApp {
 
-    @Test
-    void testTotalCapacity_NormalCase() {
-        List<TrainConsistManagementApp.Bogie> bogies = Arrays.asList(
-                new TrainConsistManagementApp.Bogie("Sleeper", 72),
-                new TrainConsistManagementApp.Bogie("AC Chair", 56),
-                new TrainConsistManagementApp.Bogie("First Class", 24)
-        );
+    static class GoodsBogie {
+        String type;
+        String cargo;
 
-        int result = TrainConsistManagementApp.calculateTotalCapacity(bogies);
+        GoodsBogie(String type, String cargo) {
+            this.type = type;
+            this.cargo = cargo;
+        }
+    }
 
-        assertEquals(152, result);
+    private boolean validateSafety(List<GoodsBogie> bogies) {
+        return bogies.stream()
+                .allMatch(bogie ->
+                        !bogie.type.equalsIgnoreCase("Cylindrical")
+                                || bogie.cargo.equalsIgnoreCase("Petroleum")
+                );
     }
 
     @Test
-    void testTotalCapacity_EmptyList() {
-        List<TrainConsistManagementApp.Bogie> bogies = new ArrayList<>();
+    void testSafety_AllBogiesValid() {
+        List<GoodsBogie> bogies = new ArrayList<>();
+        bogies.add(new GoodsBogie("Cylindrical", "Petroleum"));
+        bogies.add(new GoodsBogie("Open", "Coal"));
+        bogies.add(new GoodsBogie("Box", "Grain"));
 
-        int result = TrainConsistManagementApp.calculateTotalCapacity(bogies);
-
-        assertEquals(0, result);
+        assertTrue(validateSafety(bogies));
     }
 
     @Test
-    void testTotalCapacity_SingleBogie() {
-        List<TrainConsistManagementApp.Bogie> bogies = Arrays.asList(
-                new TrainConsistManagementApp.Bogie("Sleeper", 72)
-        );
+    void testSafety_CylindricalWithInvalidCargo() {
+        List<GoodsBogie> bogies = new ArrayList<>();
+        bogies.add(new GoodsBogie("Cylindrical", "Coal"));
 
-        int result = TrainConsistManagementApp.calculateTotalCapacity(bogies);
-
-        assertEquals(72, result);
+        assertFalse(validateSafety(bogies));
     }
 
     @Test
-    void testTotalCapacity_MultipleSameType() {
-        List<TrainConsistManagementApp.Bogie> bogies = Arrays.asList(
-                new TrainConsistManagementApp.Bogie("Sleeper", 72),
-                new TrainConsistManagementApp.Bogie("Sleeper", 70)
-        );
+    void testSafety_NonCylindricalBogiesAllowed() {
+        List<GoodsBogie> bogies = new ArrayList<>();
+        bogies.add(new GoodsBogie("Open", "Coal"));
+        bogies.add(new GoodsBogie("Box", "Grain"));
 
-        int result = TrainConsistManagementApp.calculateTotalCapacity(bogies);
-
-        assertEquals(142, result);
+        assertTrue(validateSafety(bogies));
     }
 
     @Test
-    void testTotalCapacity_OriginalListUnchanged() {
-        List<TrainConsistManagementApp.Bogie> bogies = new ArrayList<>();
-        bogies.add(new TrainConsistManagementApp.Bogie("Sleeper", 72));
+    void testSafety_MixedBogiesWithViolation() {
+        List<GoodsBogie> bogies = new ArrayList<>();
+        bogies.add(new GoodsBogie("Cylindrical", "Petroleum"));
+        bogies.add(new GoodsBogie("Open", "Coal"));
+        bogies.add(new GoodsBogie("Cylindrical", "Coal"));
 
-        TrainConsistManagementApp.calculateTotalCapacity(bogies);
+        assertFalse(validateSafety(bogies));
+    }
 
-        assertEquals(1, bogies.size());
+    @Test
+    void testSafety_EmptyBogieList() {
+        List<GoodsBogie> bogies = new ArrayList<>();
+
+        assertTrue(validateSafety(bogies));
     }
 import org.junit.jupiter.api.Test;
 import java.util.regex.Pattern;

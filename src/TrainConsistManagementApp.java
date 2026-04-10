@@ -1,26 +1,53 @@
-import java.util.*;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class TrainConsistManagementApp {
-    static final String TRAIN_ID_REGEX = "^TRN-\\d{4}$";
-    static final String CARGO_CODE_REGEX = "^PET-[A-Z]{2}$";
+
+    static class Bogie {
+        String name;
+        int capacity;
+
+        Bogie(String name, int capacity) {
+            this.name = name;
+            this.capacity = capacity;
+        }
+
+        @Override
+        public String toString() {
+            return name + " (" + capacity + " seats)";
+        }
+    }
+
+    // Method for filtering bogies by capacity threshold
+    public static List<Bogie> filterBogiesByCapacity(List<Bogie> bogies, int threshold) {
+        return bogies.stream()
+                .filter(b -> b.capacity > threshold)
+                .collect(Collectors.toList());
+    }
+
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("============================================================");
-        System.out.println("\n UC11 : Validate Train ID and Cargo CODES(Redgex)\n");
-        System.out.println("============================================================");
-        System.out.print("Enter Train ID (Format : TRN-1234): ");
-        String trainID = scanner.nextLine();
-        System.out.print("Enter Cargo CODE (Format : PET-AB): ");
-        String cargoCode = scanner.nextLine();
-        boolean isTrainValid = Pattern.matches(TRAIN_ID_REGEX, trainID);
-        boolean isCargoValid = Pattern.matches(CARGO_CODE_REGEX, cargoCode);
-        System.out.println("\nValidation Results:");
-        System.out.println("Train ID Valid: " + isTrainValid);
-        System.out.println("Cargo Code Valid: " + isCargoValid);
-        System.out.println("\nUC11 validation completed...");
+        System.out.println("======================================");
+        System.out.println("   === UC 8 - Filter Bogies By Capacity ===");
+        System.out.println("======================================");
 
+        List<Bogie> bogies = new ArrayList<>();
+        bogies.add(new Bogie("Sleeper", 72));
+        bogies.add(new Bogie("AC Chair", 56));
+        bogies.add(new Bogie("First Class", 24));
+        bogies.add(new Bogie("General", 90));
+
+        System.out.println("All Bogies:");
+        for (Bogie b : bogies) {
+            System.out.println(b);
+        }
+
+        int threshold = 60;
+        List<Bogie> filteredBogies = filterBogiesByCapacity(bogies, threshold);
+
+        System.out.println("\nBogies with capacity > " + threshold + ":");
+        for (Bogie b : filteredBogies) {
+            System.out.println(b);
+        }
     }
-
-
-    }
+}

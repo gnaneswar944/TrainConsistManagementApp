@@ -1,5 +1,4 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class TrainConsistManagementApp {
@@ -15,20 +14,18 @@ public class TrainConsistManagementApp {
 
         @Override
         public String toString() {
-            return name + " (" + capacity + " seats)";
+            return name + "(" + capacity + " seats)";
         }
     }
 
-    // Method for filtering bogies by capacity threshold
-    public static List<Bogie> filterBogiesByCapacity(List<Bogie> bogies, int threshold) {
+    public static Map<String, List<Bogie>> groupBogiesByType(List<Bogie> bogies) {
         return bogies.stream()
-                .filter(b -> b.capacity > threshold)
-                .collect(Collectors.toList());
+                .collect(Collectors.groupingBy(b -> b.name));
     }
 
     public static void main(String[] args) {
         System.out.println("======================================");
-        System.out.println("   === UC 8 - Filter Bogies By Capacity ===");
+        System.out.println("   === UC 9 - Group Bogies by Type ===");
         System.out.println("======================================");
 
         List<Bogie> bogies = new ArrayList<>();
@@ -36,18 +33,21 @@ public class TrainConsistManagementApp {
         bogies.add(new Bogie("AC Chair", 56));
         bogies.add(new Bogie("First Class", 24));
         bogies.add(new Bogie("General", 90));
+        bogies.add(new Bogie("Sleeper", 80));
 
         System.out.println("All Bogies:");
         for (Bogie b : bogies) {
             System.out.println(b);
         }
 
-        int threshold = 60;
-        List<Bogie> filteredBogies = filterBogiesByCapacity(bogies, threshold);
+        Map<String, List<Bogie>> groupedBogies = groupBogiesByType(bogies);
 
-        System.out.println("\nBogies with capacity > " + threshold + ":");
-        for (Bogie b : filteredBogies) {
-            System.out.println(b);
+        System.out.println("\nGrouped Bogies:");
+        for (Map.Entry<String, List<Bogie>> entry : groupedBogies.entrySet()) {
+            System.out.println("\nBogie Type: " + entry.getKey());
+            for (Bogie b : entry.getValue()) {
+                System.out.println("Capacity -> " + b.capacity);
+            }
         }
     }
 }

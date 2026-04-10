@@ -1,50 +1,55 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TrainConsistManagementApp {
 
-    static class Bogie {
-        String name;
-        int capacity;
+    // Goods Bogie model
+    static class GoodsBogie {
+        String type;
+        String cargo;
 
-        Bogie(String name, int capacity) {
-            this.name = name;
-            this.capacity = capacity;
+        GoodsBogie(String type, String cargo) {
+            this.type = type;
+            this.cargo = cargo;
         }
 
         @Override
         public String toString() {
-            return name + " (" + capacity + " seats)";
+            return type + " -> " + cargo;
         }
-    }
-
-    public static int calculateTotalCapacity(List<Bogie> bogies) {
-        return bogies.stream()
-                .map(b -> b.capacity)      // Extract capacity
-                .reduce(0, Integer::sum);  // Sum all
     }
 
     public static void main(String[] args) {
 
-        System.out.println("======================================");
-        System.out.println("   === UC10 - Total Seat Count ===   ");
-        System.out.println("======================================");
+        System.out.println("==============================================");
+        System.out.println(" UC12 - Safety Compliance Check for Goods Bogies ");
+        System.out.println("==============================================\n");
 
-        // Create list of bogies
-        List<Bogie> bogies = new ArrayList<>();
+        // Create goods bogie list
+        List<GoodsBogie> goodsBogies = new ArrayList<>();
+        goodsBogies.add(new GoodsBogie("Cylindrical", "Petroleum"));
+        goodsBogies.add(new GoodsBogie("Open", "Coal"));
+        goodsBogies.add(new GoodsBogie("Box", "Grain"));
+        goodsBogies.add(new GoodsBogie("Cylindrical", "Coal"));   // Invalid
 
-        bogies.add(new Bogie("Sleeper", 72));
-        bogies.add(new Bogie("AC Chair", 56));
-        bogies.add(new Bogie("First Class", 24));
-        bogies.add(new Bogie("Sleeper", 70));
+        System.out.println("Goods Bogies in Train:");
+        goodsBogies.forEach(System.out::println);
 
-        // Display bogies
-        System.out.println("Bogies in Train:");
-        for (Bogie b : bogies) {
-            System.out.println(b);
+        // Safety validation using stream and allMatch()
+        boolean isSafe = goodsBogies.stream()
+                .allMatch(bogie ->
+                        !bogie.type.equalsIgnoreCase("Cylindrical")
+                                || bogie.cargo.equalsIgnoreCase("Petroleum")
+                );
+
+        System.out.println("\nSafety Compliance Status: " + isSafe);
+
+        if (isSafe) {
+            System.out.println("Train formation is SAFE.");
+        } else {
+            System.out.println("Train formation is NOT SAFE.");
         }
-        int totalCapacity = calculateTotalCapacity(bogies);
 
-        // Display result
-        System.out.println("\nTotal Seating Capacity: " + totalCapacity);
+        System.out.println("\nUC12 safety validation completed...");
     }
 }

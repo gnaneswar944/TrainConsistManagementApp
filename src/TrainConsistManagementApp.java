@@ -1,86 +1,65 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 public class TrainConsistManagementApp {
 
-    // Bogie model
-    static class Bogie {
-        String type;
-        int capacity;
+    // ---- CUSTOM EXCEPTION ----
+    static class InvalidCapacityException extends Exception {
+        public InvalidCapacityException(String message) {
+            super(message);
+        }
+    }
 
-        Bogie(String type, int capacity) {
-            this.type = type;
+    // ---- Passenger Bogie model with validation ----
+    static class PassengerBogie {
+        private String bogieType;
+        private int capacity;
+
+        public PassengerBogie(String bogieType, int capacity) throws InvalidCapacityException {
+            if (capacity <= 0) {
+                throw new InvalidCapacityException("Invalid bogie capacity: Capacity must be greater than zero.");
+            }
+            this.bogieType = bogieType;
             this.capacity = capacity;
+        }
+
+        public String getBogieType() {
+            return bogieType;
+        }
+
+        public int getCapacity() {
+            return capacity;
         }
 
         @Override
         public String toString() {
-            return type + " (" + capacity + " seats)";
+            return bogieType + " Bogie [Capacity = " + capacity + "]";
         }
-    }
-
-    // Loop-based filtering
-    public static List<Bogie> filterUsingLoop(List<Bogie> bogies, int minCapacity) {
-        List<Bogie> result = new ArrayList<>();
-        for (Bogie bogie : bogies) {
-            if (bogie.capacity >= minCapacity) {
-                result.add(bogie);
-            }
-        }
-        return result;
-    }
-
-    // Stream-based filtering
-    public static List<Bogie> filterUsingStream(List<Bogie> bogies, int minCapacity) {
-        return bogies.stream()
-                .filter(bogie -> bogie.capacity >= minCapacity)
-                .collect(Collectors.toList());
     }
 
     public static void main(String[] args) {
+        System.out.println("==============================================");
+        System.out.println(" UC14 - Handle Invalid Bogie Capacity ");
+        System.out.println("==============================================");
 
-        System.out.println("=================================================");
-        System.out.println("UC13 - Performance Comparison (Loops vs Streams) ");
-        System.out.println("=================================================\n");
-
-        // Create large test dataset
-        List<Bogie> bogies = new ArrayList<>();
-
-        for (int i = 1; i <= 100000; i++) {
-            if (i % 4 == 0) {
-                bogies.add(new Bogie("Sleeper", 72));
-            } else if (i % 4 == 1) {
-                bogies.add(new Bogie("AC Chair", 56));
-            } else if (i % 4 == 2) {
-                bogies.add(new Bogie("First Class", 24));
-            } else {
-                bogies.add(new Bogie("General", 90));
-            }
+        try {
+            PassengerBogie bogie1 = new PassengerBogie("Sleeper", 72);
+            System.out.println("Bogie created successfully: " + bogie1);
+        } catch (InvalidCapacityException e) {
+            System.out.println("Exception: " + e.getMessage());
         }
 
-        int minCapacity = 50;
+        try {
+            PassengerBogie bogie2 = new PassengerBogie("AC Chair", -10);
+            System.out.println("Bogie created successfully: " + bogie2);
+        } catch (InvalidCapacityException e) {
+            System.out.println("Exception: " + e.getMessage());
+        }
 
-        // Measure loop execution time
-        long loopStart = System.nanoTime();
-        List<Bogie> loopResult = filterUsingLoop(bogies, minCapacity);
-        long loopEnd = System.nanoTime();
-        long loopTime = loopEnd - loopStart;
+        try {
+            PassengerBogie bogie3 = new PassengerBogie("First Class", 0);
+            System.out.println("Bogie created successfully: " + bogie3);
+        } catch (InvalidCapacityException e) {
+            System.out.println("Exception: " + e.getMessage());
+        }
 
-        // Measure stream execution time
-        long streamStart = System.nanoTime();
-        List<Bogie> streamResult = filterUsingStream(bogies, minCapacity);
-        long streamEnd = System.nanoTime();
-        long streamTime = streamEnd - streamStart;
-
-        // Display results
-        System.out.println("Loop Execution Time (ns): " + loopTime);
-        System.out.println("Stream Execution Time (ns): " + streamTime);
-        System.out.println();
-
-        System.out.println("Loop Filtered Bogies Count   : " + loopResult.size());
-        System.out.println("Stream Filtered Bogies Count : " + streamResult.size());
-        System.out.println();
-
-        System.out.println("UC13 performance benchmarking completed...");
+        System.out.println("Program continues safely after exception handling.");
     }
 }

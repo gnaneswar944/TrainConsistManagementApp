@@ -1,79 +1,76 @@
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TrainConsistManagementAppTest extends TrainConsistManagementApp {
 
     @Test
-    void testLoopFilteringLogic() {
-        List<TrainConsistManagementApp.Bogie> bogies = new ArrayList<>();
-        bogies.add(new TrainConsistManagementApp.Bogie("Sleeper", 72));
-        bogies.add(new TrainConsistManagementApp.Bogie("First Class", 24));
-        bogies.add(new TrainConsistManagementApp.Bogie("General", 90));
+    void testException_ValidCapacityCreation() throws TrainConsistManagementApp.InvalidCapacityException {
+        TrainConsistManagementApp.PassengerBogie bogie =
+                new TrainConsistManagementApp.PassengerBogie("Sleeper", 72);
 
-        List<TrainConsistManagementApp.Bogie> result =
-                TrainConsistManagementApp.filterUsingLoop(bogies, 50);
-
-        assertEquals(2, result.size());
+        assertNotNull(bogie);
+        assertEquals("Sleeper", bogie.getBogieType());
+        assertEquals(72, bogie.getCapacity());
     }
 
     @Test
-    void testStreamFilteringLogic() {
-        List<TrainConsistManagementApp.Bogie> bogies = new ArrayList<>();
-        bogies.add(new TrainConsistManagementApp.Bogie("AC Chair", 56));
-        bogies.add(new TrainConsistManagementApp.Bogie("First Class", 24));
-        bogies.add(new TrainConsistManagementApp.Bogie("General", 90));
+    void testException_NegativeCapacityThrowsException() {
+        Exception exception = assertThrows(
+                TrainConsistManagementApp.InvalidCapacityException.class,
+                () -> new TrainConsistManagementApp.PassengerBogie("AC Chair", -10)
+        );
 
-        List<TrainConsistManagementApp.Bogie> result =
-                TrainConsistManagementApp.filterUsingStream(bogies, 50);
-
-        assertEquals(2, result.size());
+        assertEquals("Invalid bogie capacity: Capacity must be greater than zero.", exception.getMessage());
     }
 
     @Test
-    void testLoopAndStreamResultsMatch() {
-        List<TrainConsistManagementApp.Bogie> bogies = new ArrayList<>();
-        bogies.add(new TrainConsistManagementApp.Bogie("Sleeper", 72));
-        bogies.add(new TrainConsistManagementApp.Bogie("AC Chair", 56));
-        bogies.add(new TrainConsistManagementApp.Bogie("First Class", 24));
-        bogies.add(new TrainConsistManagementApp.Bogie("General", 90));
+    void testException_ZeroCapacityThrowsException() {
+        Exception exception = assertThrows(
+                TrainConsistManagementApp.InvalidCapacityException.class,
+                () -> new TrainConsistManagementApp.PassengerBogie("First Class", 0)
+        );
 
-        List<TrainConsistManagementApp.Bogie> loopResult =
-                TrainConsistManagementApp.filterUsingLoop(bogies, 50);
-
-        List<TrainConsistManagementApp.Bogie> streamResult =
-                TrainConsistManagementApp.filterUsingStream(bogies, 50);
-
-        assertEquals(loopResult.size(), streamResult.size());
+        assertEquals("Invalid bogie capacity: Capacity must be greater than zero.", exception.getMessage());
     }
 
     @Test
-    void testExecutionTimeMeasurement() {
-        List<TrainConsistManagementApp.Bogie> bogies = new ArrayList<>();
-        for (int i = 0; i < 1000; i++) {
-            bogies.add(new TrainConsistManagementApp.Bogie("Sleeper", 72));
-        }
+    void testException_ExceptionMessageValidation() {
+        TrainConsistManagementApp.InvalidCapacityException exception =
+                new TrainConsistManagementApp.InvalidCapacityException(
+                        "Invalid bogie capacity: Capacity must be greater than zero."
+                );
 
-        long start = System.nanoTime();
-        TrainConsistManagementApp.filterUsingLoop(bogies, 50);
-        long end = System.nanoTime();
-
-        assertTrue(end - start > 0);
+        assertEquals("Invalid bogie capacity: Capacity must be greater than zero.", exception.getMessage());
     }
 
     @Test
-    void testLargeDatasetProcessing() {
-        List<TrainConsistManagementApp.Bogie> bogies = new ArrayList<>();
-        for (int i = 0; i < 10000; i++) {
-            bogies.add(new TrainConsistManagementApp.Bogie("General", 90));
-        }
+    void testException_ObjectIntegrityAfterCreation() throws TrainConsistManagementApp.InvalidCapacityException {
+        TrainConsistManagementApp.PassengerBogie bogie =
+                new TrainConsistManagementApp.PassengerBogie("General", 90);
 
-        List<TrainConsistManagementApp.Bogie> result =
-                TrainConsistManagementApp.filterUsingStream(bogies, 50);
+        assertAll(
+                () -> assertEquals("General", bogie.getBogieType()),
+                () -> assertEquals(90, bogie.getCapacity())
+        );
+    }
 
-        assertEquals(10000, result.size());
+    @Test
+    void testException_MultipleValidBogiesCreation() throws TrainConsistManagementApp.InvalidCapacityException {
+        TrainConsistManagementApp.PassengerBogie bogie1 =
+                new TrainConsistManagementApp.PassengerBogie("Sleeper", 72);
+
+        TrainConsistManagementApp.PassengerBogie bogie2 =
+                new TrainConsistManagementApp.PassengerBogie("AC Chair", 56);
+
+        TrainConsistManagementApp.PassengerBogie bogie3 =
+                new TrainConsistManagementApp.PassengerBogie("First Class", 24);
+
+        assertNotNull(bogie1);
+        assertNotNull(bogie2);
+        assertNotNull(bogie3);
+
+        assertEquals(72, bogie1.getCapacity());
+        assertEquals(56, bogie2.getCapacity());
+        assertEquals(24, bogie3.getCapacity());
     }
 }
